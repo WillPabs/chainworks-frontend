@@ -49,7 +49,7 @@ const HeaderSection = (props) => {
 						</span>
 					</Col>
 					<Col>
-						<div className="logo">SOLFUILD</div>
+						<div className="logo">CHAINWORKS</div>
 					</Col>
 				</Row>
 				<Col style={{ marginRight: "15px" }}>

@@ -1,15 +1,40 @@
 import { combineReducers } from "redux";
 import Wallet from "@project-serum/sol-wallet-adapter";
 import { Connection } from "@solana/web3.js";
+import { useEffect, useState } from "react";
+import HeaderAuth from '../components/sections/HeaderAuth'
+// import { AppConfig, showConnect, UserSession, AuthOptions } from '@stacks/connect';
 
-const cluster = "https://api.devnet.solana.com";
+const cluster = "https://stacks-node-api.testnet.stacks.co/";
+// const appDetails: AuthOptions["appDetails"] = {
+//   name: "Chainworks",
+//   icon: "https://freesvg.org/img/youk-k-Beanstalk.png",
+// }
+
+// function Auth() {
+//   const [userData, setUserData] = useState<UserData | undefined>(undefined);
+//   const address = userData?.profile?.stxAddress?.testnet;
+
+//   const appConfig = new AppConfig(['store_write']);
+//   const userSession = new UserSession({ appConfig });
+
+//   const handleLogin = async () => {
+//     showConnect({
+//       appDetails,
+//       onFinish: () => window.location.reload(),
+//       userSession,
+//     });
+//   }
+// }
 
 const walletConfig = {
-  wallet: new Wallet("https://www.sollet.io", cluster),
+  wallet: new Wallet("https://wallet.hiro.so/", cluster),
   connection: new Connection(cluster, "confirmed"),
 };
 
-const connectWalletReducer = (state = walletConfig, action) => {
+const config = HeaderAuth().handleOpenAuth;
+
+const connectWalletReducer = (state = config, action) => {
   switch (action.type) {
     case "WALLET_CONNECT":
       return { ...state, wallet: action.payload.wallet };

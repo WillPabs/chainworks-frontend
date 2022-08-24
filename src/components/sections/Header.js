@@ -8,6 +8,8 @@ import {
 } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 
+import HeaderAuth from '../sections/HeaderAuth'
+
 import { connectWallet, disconnectWallet } from "../../actions";
 import { isMobile } from "react-device-detect";
 
@@ -53,6 +55,7 @@ const HeaderSection = (props) => {
 					</Col>
 				</Row>
 				<Col style={{ marginRight: "15px" }}>
+					<HeaderAuth></HeaderAuth>
 					<Button
 						type="primary"
 						icon={

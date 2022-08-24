@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 import Wallet from "@project-serum/sol-wallet-adapter";
 import { Connection } from "@solana/web3.js";
-import { useEffect, useState } from "react";
-import HeaderAuth from '../components/sections/HeaderAuth'
+// import { useEffect, useState } from "react";
+// import HeaderAuth from '../components/sections/HeaderAuth'
 // import { AppConfig, showConnect, UserSession, AuthOptions } from '@stacks/connect';
 
 const cluster = "https://stacks-node-api.testnet.stacks.co/";
@@ -32,9 +32,7 @@ const walletConfig = {
   connection: new Connection(cluster, "confirmed"),
 };
 
-const config = HeaderAuth().handleOpenAuth;
-
-const connectWalletReducer = (state = config, action) => {
+const connectWalletReducer = (state = walletConfig, action) => {
   switch (action.type) {
     case "WALLET_CONNECT":
       return { ...state, wallet: action.payload.wallet };

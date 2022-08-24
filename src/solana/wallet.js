@@ -1,18 +1,10 @@
-import { AppConfig, showConnect, UserSession } from '@stacks/connect';
-
-function Auth() {
-  const appConfig = new AppConfig(['store_write']);
-  const userSession = new UserSession({ appConfig });
-
-  const handleLogin = async () => {
-    showConnect({
-      appDetails,
-      onFinish: () => window.location.reload(),
-      userSession,
-    });
-  }
-}
-
+import Wallet from "@project-serum/sol-wallet-adapter";
+import {
+  Connection,
+  SystemProgram,
+  Transaction,
+  PublicKey,
+} from "@solana/web3.js";
 
 const cluster = "https://stacks-node-api.testnet.stacks.co/";
 const connection = new Connection(cluster, "confirmed");

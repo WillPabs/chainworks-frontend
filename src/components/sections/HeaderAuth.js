@@ -8,8 +8,8 @@ import {
   loginStatusAtom,
   stxAddressAtom,
   appStxAddressAtom,
-  stxBnsNameAtom,
-  userBalancesAtom,
+//   stxBnsNameAtom,
+//   userBalancesAtom,
 } from '../../store/stacks';
 
 export default function HeaderAuth() {
@@ -18,8 +18,8 @@ export default function HeaderAuth() {
     const [loginStatus] = useAtom(loginStatusAtom);
     const [stxAddress, setStxAddress] = useAtom(stxAddressAtom);
     const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
-    const setBnsName = useUpdateAtom(stxBnsNameAtom);
-    const setUserBalances = useUpdateAtom(userBalancesAtom);
+    // const setBnsName = useUpdateAtom(stxBnsNameAtom);
+    // const setUserBalances = useUpdateAtom(userBalancesAtom);
   
     useEffect(() => {
       const fetchUserData = async () => {
@@ -37,7 +37,12 @@ export default function HeaderAuth() {
       fetchUserData();
     }, [loginStatus, setAppStxAddress, setStxAddress, userSessionState]);
 
-    return {
-        handleOpenAuth
-    }
+    return (
+        <button
+            onClick={handleOpenAuth}
+            type='button'
+        >
+            Connect Wallet
+        </button> 
+    )
 }

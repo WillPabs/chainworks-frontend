@@ -13,6 +13,9 @@ import Stream from "./layouts/Stream";
 import CreateStream from "./layouts/CreateStream";
 import useDarkMode from "use-dark-mode";
 
+import { Connect } from '@stacks/connect-react';
+import { useConnect } from "../lib/auth";
+
 const { Content } = Layout;
 
 function getKey(path) {
@@ -38,6 +41,7 @@ const App = () => {
   const location = useLocation()
 	const [key, setKey] = useState(getKey(location.pathname));
   
+  const { authOptions } = useConnect();
 
   return (
     <Layout>

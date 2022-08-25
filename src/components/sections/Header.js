@@ -7,11 +7,14 @@ import {
 	LogoutOutlined,
 } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 
 import HeaderAuth from '../sections/HeaderAuth'
 
 import { connectWallet, disconnectWallet } from "../../actions";
 import { isMobile } from "react-device-detect";
+import { AppConfig, UserSession, showConnect } from "@stacks/connect";
+
 
 const { Header } = Layout;
 
@@ -22,16 +25,64 @@ const HeaderSection = (props) => {
 		}
 	};
 
+	const appDetail = {
+		name: "Chainworks",
+		icon: '',
+	}
+
 	const selector = useSelector((state) => state.walletConfig);
+	// console.log(selector)
 	const dispatch = useDispatch();
+
+	const [userData, setUserData] = useState(undefined);
+    const address = userData?.profile?.stxAddress?.testnet;
+
+    const appConfig = new AppConfig(['store_write']);
+    const userSession = new UserSession({ appConfig });
+
+    useEffect(() => {
+        if (userSession.isSignInPending()) {
+            userSession.handlePendingSignIn().then((userData) => {
+                setUserData(userData);
+            });
+        } else if (userSession.isUserSignedIn()) {
+            // setLoggedIn(true);
+            setUserData(userSession.loadUserData());
+        }
+    }, []);
+	
+    console.log({ userData, address });
+
+    const handleLogin = async () => {
+        showConnect({
+            appDetail,
+            onFinish: () => window.location.reload(),
+            userSession,
+        });
+    }
+
+    const logUserOut = async () => {
+        userSession.signUserOut();
+        window.location.reload();
+    }
+
 
 	const handleOnClick = (e) => {
 		e.preventDefault();
-		if (selector.wallet.connected) {
-			dispatch(disconnectWallet());
-		} else {
-			dispatch(connectWallet());
-		}
+		showConnect({
+			appDetail,
+			redirectTo: "/",
+			onFinish: () => {
+			  let userData = userSession.loadUserData();
+			  // Save or otherwise utilize userData post-authentication
+			},
+			userSession: userSession,
+		  });
+		// if (selector.wallet.connected) {
+		// 	dispatch(disconnectWallet());
+		// } else {
+		// 	dispatch(connectWallet());
+		// }
 	};
 
 	return (
@@ -65,7 +116,7 @@ const HeaderSection = (props) => {
 								<LoginOutlined />
 							)
 						}
-						onClick={handleOnClick}
+						onClick={handleLogin}
 						shape="round"
 					>
 						{selector.wallet.connected

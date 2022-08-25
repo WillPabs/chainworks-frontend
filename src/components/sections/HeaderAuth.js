@@ -4,6 +4,7 @@ import { useUpdateAtom } from 'jotai/utils';
 import { getUserData } from '@stacks/connect';
 import { getStacksAccount } from '../../lib/account';
 import { useConnect, userSessionStateAtom } from '../../lib/auth';
+import { Button } from "antd";
 import {
   loginStatusAtom,
   stxAddressAtom,
@@ -38,11 +39,12 @@ export default function HeaderAuth() {
     }, [loginStatus, setAppStxAddress, setStxAddress, userSessionState]);
 
     return (
-        <button
+        <Button
             onClick={handleOpenAuth}
             type='button'
+            shape='round'
         >
             Connect Wallet
-        </button> 
+        </Button> 
     )
 }

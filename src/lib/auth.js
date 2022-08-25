@@ -29,6 +29,7 @@ export const useConnect = () => {
     const userData = await payload.userSession.loadUserData();
     setUserData(userData);
     setLoginStatus(true);
+    console.log(userData)
   };
 
   const authOptions = {

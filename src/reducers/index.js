@@ -1,31 +1,8 @@
 import { combineReducers } from "redux";
 import Wallet from "@project-serum/sol-wallet-adapter";
 import { Connection } from "@solana/web3.js";
-// import { useEffect, useState } from "react";
-// import HeaderAuth from '../components/sections/HeaderAuth'
-// import { AppConfig, showConnect, UserSession, AuthOptions } from '@stacks/connect';
 
 const cluster = "https://stacks-node-api.testnet.stacks.co/";
-// const appDetails: AuthOptions["appDetails"] = {
-//   name: "Chainworks",
-//   icon: "https://freesvg.org/img/youk-k-Beanstalk.png",
-// }
-
-// function Auth() {
-//   const [userData, setUserData] = useState<UserData | undefined>(undefined);
-//   const address = userData?.profile?.stxAddress?.testnet;
-
-//   const appConfig = new AppConfig(['store_write']);
-//   const userSession = new UserSession({ appConfig });
-
-//   const handleLogin = async () => {
-//     showConnect({
-//       appDetails,
-//       onFinish: () => window.location.reload(),
-//       userSession,
-//     });
-//   }
-// }
 
 const walletConfig = {
   wallet: new Wallet("https://wallet.hiro.so/", cluster),

@@ -6,14 +6,20 @@ import {
 	LoginOutlined,
 	LogoutOutlined,
 } from "@ant-design/icons";
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import HeaderAuth from '../sections/HeaderAuth'
-
-import { connectWallet, disconnectWallet } from "../../actions";
 import { isMobile } from "react-device-detect";
-import { AppConfig, UserSession, showConnect } from "@stacks/connect";
+import { getStacksAccount } from '../../lib/account';
+import { getUserData } from "@stacks/connect";
+import { useConnect, userSessionStateAtom } from '../../lib/auth';
+import { isMainnet } from '../../lib/stacks';
+import { useAtom } from 'jotai';
+import { useUpdateAtom } from 'jotai/utils';
+import { 
+	loginStatusAtom,
+	stxAddressAtom,
+	appStxAddressAtom,
+} from "../../store/stacks";
 
 
 const { Header } = Layout;
@@ -25,64 +31,36 @@ const HeaderSection = (props) => {
 		}
 	};
 
-	const appDetail = {
-		name: "Chainworks",
-		icon: '',
-	}
-
-	const selector = useSelector((state) => state.walletConfig);
-	// console.log(selector)
-	const dispatch = useDispatch();
-
-	const [userData, setUserData] = useState(undefined);
-    const address = userData?.profile?.stxAddress?.testnet;
-
-    const appConfig = new AppConfig(['store_write']);
-    const userSession = new UserSession({ appConfig });
+	const { handleOpenAuth } = useConnect();
+	const { handleSignOut } = useConnect();
+	const [userSessionState] = useAtom(userSessionStateAtom);
+	const [stxAddress, setStxAddress] = useAtom(stxAddressAtom);
+	const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
+	const [loginStatus] = useAtom(loginStatusAtom);
 
     useEffect(() => {
-        if (userSession.isSignInPending()) {
-            userSession.handlePendingSignIn().then((userData) => {
-                setUserData(userData);
-            });
-        } else if (userSession.isUserSignedIn()) {
-            // setLoggedIn(true);
-            setUserData(userSession.loadUserData());
-        }
-    }, []);
-	
-    console.log({ userData, address });
-
-    const handleLogin = async () => {
-        showConnect({
-            appDetail,
-            onFinish: () => window.location.reload(),
-            userSession,
-        });
-    }
-
-    const logUserOut = async () => {
-        userSession.signUserOut();
-        window.location.reload();
-    }
-
+		const fetchUserData = async () => {
+			if (loginStatus) {
+				const userData = await getUserData(userSessionState);
+				const stxAddress = userData.profile.stxAddress[isMainnet ? 'mainnet' : 'testnet'];
+				setStxAddress({ loaded: true, data: stxAddress });
+				const { appStxAddress } = getStacksAccount(userData.appPrivateKey);
+				setAppStxAddress({ loaded: true, data: appStxAddress });
+			  } else {
+				setStxAddress({ loaded: false, data: '' });
+				setAppStxAddress({ loaded: false, data: '' });
+			  }
+			};
+			fetchUserData();
+	}, [loginStatus, setAppStxAddress, setStxAddress, userSessionState]);
 
 	const handleOnClick = (e) => {
 		e.preventDefault();
-		showConnect({
-			appDetail,
-			redirectTo: "/",
-			onFinish: () => {
-			  let userData = userSession.loadUserData();
-			  // Save or otherwise utilize userData post-authentication
-			},
-			userSession: userSession,
-		  });
-		// if (selector.wallet.connected) {
-		// 	dispatch(disconnectWallet());
-		// } else {
-		// 	dispatch(connectWallet());
-		// }
+		if (loginStatus) {
+			handleSignOut();
+		} else {
+			handleOpenAuth();
+		}
 	};
 
 	return (
@@ -106,20 +84,19 @@ const HeaderSection = (props) => {
 					</Col>
 				</Row>
 				<Col style={{ marginRight: "15px" }}>
-					<HeaderAuth></HeaderAuth>
 					<Button
 						type="primary"
 						icon={
-							selector.wallet.connected ? (
+							loginStatus ? (
 								<LogoutOutlined />
 							) : (
 								<LoginOutlined />
 							)
 						}
-						onClick={handleLogin}
+						onClick={handleOnClick}
 						shape="round"
 					>
-						{selector.wallet.connected
+						{loginStatus
 							? "Disconnect Wallet"
 							: "Connect Wallet"}
 					</Button>

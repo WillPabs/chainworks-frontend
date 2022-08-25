@@ -2,19 +2,20 @@ import React from "react";
 import { useRive } from "rive-react";
 import { Row } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
-import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { connectWallet } from "../../actions";
 import { isMobile } from "react-device-detect";
+import { useConnect } from '../../lib/auth';
+import { useAtom } from "jotai";
+import { loginStatusAtom } from "../../store/stacks";
 
 const Dashboard = ({ collapsed, setKey }) => {
-	const selector = useSelector((state) => state.walletConfig);
-	const dispatch = useDispatch();
+	const { handleOpenAuth } = useConnect();
+	const [loginStatus] = useAtom(loginStatusAtom);
 
 	const handleOnClick = (e) => {
 		e.preventDefault();
-		dispatch(connectWallet());
+		handleOpenAuth();
 	};
 
 	const { RiveComponent } = useRive({
@@ -45,15 +46,15 @@ const Dashboard = ({ collapsed, setKey }) => {
 						</h2>
 					</div>
 					<Row>
-						{!selector.wallet.connected ? (
+						{!loginStatus ? (
 							<button
 								className="animated-button"
 								style={{ marginLeft: 75 }}
 								onClick={handleOnClick}
 							>
-								<div class="left-btn"></div>
+								<div className="left-btn"></div>
 								<LoginOutlined /> Connect Wallet
-								<div class="right-btn"></div>
+								<div className="right-btn"></div>
 							</button>
 						) : null}
 						{!isMobile ? (
@@ -61,7 +62,7 @@ const Dashboard = ({ collapsed, setKey }) => {
 								className="animated-button2"
 								style={{
 									marginLeft: `${
-										selector.wallet.connected
+										loginStatus
 											? "75px"
 											: "10px"
 									}`,
@@ -71,9 +72,9 @@ const Dashboard = ({ collapsed, setKey }) => {
 									setKey("3");
 								}}
 							>
-								<div class="left-btn"></div>
+								<div className="left-btn"></div>
 								<Link to="receiving">View Streams</Link>
-								<div class="right-btn"></div>
+								<div className="right-btn"></div>
 							</button>
 						) : null}
 					</Row>
